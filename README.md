@@ -6,7 +6,7 @@ The challenge is to predict the speed of a car based solely on dashcam video. Th
 
 The results are great and match the labels pretty well. The MSE is 1 but taken with a grain of salt because there is no validation set. All parameters were tuned by hand on the first few hundred frames. The orange line is ground truth and the blue line is my prediction.
 
-![Predicted vs truth][/pics/trainbig.png]
+![Predicted vs truth](/pics/trainbig.png)
 
 ## Algorithm
 
@@ -31,36 +31,36 @@ The results are great and match the labels pretty well. The MSE is 1 but taken w
 
 This is relatively simple, I just use `cv2.warpPerspective()` to unskew the road in front of the car. Then, I convert to grayscale and set the mean of the image to 127 and standard deviation to 50:
 
-![Original][/pics/frame.png]
-![Unskewed][/pics/unskew.png]
+![Original](/pics/frame.png)
+![Unskewed](/pics/unskew.png)
 
 ### Feature Detection
 
 I first apply a gaussian blur to the image to make sure no video artifacts that were enhanced when unskewing/normalizing show up. Then, I apply a Sobel filter to highlight all features in the image.
 
-![Blurred][/pics/cur.png]
-![Sobeled][/pics/sobelcur.png]
+![Blurred](/pics/cur.png)
+![Sobeled](/pics/sobelcur.png)
 
 ### Offset Detection
 
 Using the features from the current frame and the previous, I sweep the two images against each other and measure correlation at each point. I do this by computing an element-wise multiply at the specified offset then getting the mean of the result. I then choose the offset with the highest correlation. As you can see, in this example the correlation is highest at a 25 pixel offset (when the arrows line up and "corrmat" is brightest).
 
-![Correlation Sweep][/pics/correlation.gif]
-![Correlation Graph][/pics/25pixsec.png]
+![Correlation Sweep](/pics/correlation.gif)
+![Correlation Graph](/pics/25pixsec.png)
 
 ### Speed Cleaning
 
 The raw offsets are very noisy and contain bad values where there aren't enough features (orange is truth):
 
-![Raw offsets][/pics/rawspeed.png]
+![Raw offsets](/pics/rawspeed.png)
 
 Here is a zoomed in version to show what the data looks like in a ~10 seconds of video with few features:
 
-![Zoomed][/pics/rawspeedzoomed.png]
+![Zoomed](/pics/rawspeedzoomed.png)
 
 To fix this, for each data point I cluster the surrounding data points using K-Means and remove if it's part of the outlier cluster. Then, I fill missing points with a normalized gaussian kernel and I use a low-pass Butterworth filter to remove noise. Finally, I scale by a constant to match the speed labels:
 
-![Predicted vs truth][/pics/trainbig.png]
+![Predicted vs truth](/pics/trainbig.png)
 
 # Future Improvements
 
@@ -73,4 +73,4 @@ To fix this, for each data point I cluster the surrounding data points using K-M
   - The minimum energy path from the top to the bottom of the image is the speed of the car.
   - This would allow for correction of previously incorrect offset estimates.
 
-  ![Correlation over time][/pics/2dcorrelation.png]
+  ![Correlation over time](/pics/2dcorrelation.png)
