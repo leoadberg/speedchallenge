@@ -62,6 +62,13 @@ To fix this, for each data point I cluster the surrounding data points using K-M
 
 ![Predicted vs truth](/pics/trainbig.png)
 
+# Test results
+
+My MSE on the test set is 13, much higher than the MSE of the training set. I don't believe my algorithm overfit on the training set as there are only a few tuned parameters, but that simply the training set and test set have different elements. As I designed the algorithm for the training set, it doesn't take into account some feature of the test set like:
+
+- Sharp turns: The training video has zero sharp turns (the only turns are slow ones on the highway), but the test video has a bunch. I suspect that my algorithm fails on turns because it doesn't check for any offset in the horizontal direction when doing the correlation sweep.
+- Cross traffic: The training video doesn't include any points where the car is stopped and there is cross traffic directly in front. However, this happens a few times in the test video, which probably messes up my algorithm. At the moment, I only detect outliers as being below the true speed, but these would create outliers higher than the true speed of 0 mph.
+
 # Future Improvements
 
 - Use only past data
